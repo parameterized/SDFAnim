@@ -20,7 +20,7 @@ vec2 castRay(vec3 ro, vec3 rd)
 		m = res.y;
 		if (res.x < precis || t > tmax) { break; }
 	}
-	if(t > tmax) { m = -1.0; }
+	if(t > tmax) { m = 0.0; }
 	return vec2(t, m);
 }
 
@@ -30,5 +30,9 @@ vec3 render(vec3 ro, vec3 rd)
 	float t = res.x;
 	float m = res.y;
 	//return vec3(mod(m/(256.0*256.0), 256.0)/255.0, mod(floor(m/256.0), 256.0)/255.0, m/255.0);
-	return vec3(m/255.0);
+	if (m >= 255.0) {
+		return vec3(0.0);
+	} else {
+		return vec3(m/255.0);
+	}
 }

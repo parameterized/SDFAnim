@@ -44,14 +44,13 @@ vec3 render(vec3 ro, vec3 rd)
 	vec3 lig = normalize(vec3(-0.4, 0.7, -0.6));
 	float dif = clamp(dot(nor, lig), 0.0, 1.0);
 	if (m == 0.0) {
-		float f = mod(floor(5.0*pos.z) + floor(5.0*pos.x), 2.0);
-        col = 0.3 + 0.1*f*vec3(1.0);
+		col = vec3(0.3, 0.9, 0.7)*dif*0.8 + 0.2;
 	} else if (m == 1.0) {
 		col *= dif*0.8 + 0.2;
-	} else if (m > 0.0 && m < 1.0) {
+	} else if (m > 1.0 && m <= 2.0) {
 		float f = mod(floor(5.0*pos.z) + floor(5.0*pos.x), 2.0);
 		col *= dif*0.8 + 0.2;
-		col = col*(1-m) + (0.3 + 0.1*f*vec3(1.0))*m;
+		col = col*(1.0-(m-1.0)) + (0.3 + 0.1*f*vec3(1.0))*(m-1.0);
 	}
 	col = mix( col, vec3(0.8,0.9,1.0), 1.0-exp( -0.0002*t*t*t ) );
 	return col;

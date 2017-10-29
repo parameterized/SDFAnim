@@ -1,42 +1,54 @@
+
 camera = {}
-camera.x = 0
-camera.y = 0
-camera.scaleX = 1
-camera.scaleY = 1
-camera.rotation = 0
 
-function camera:set()
-love.graphics.push()
-love.graphics.rotate(-self.rotation)
-love.graphics.scale(1 / self.scaleX, 1 / self.scaleY)
-love.graphics.translate(-self.x, -self.y)
+function camera.load()
+
 end
 
-function camera:unset()
-love.graphics.pop()
+function camera.update(dt)
+	local spd = moveSpd
+	if love.keyboard.isDown("lctrl") then
+		spd = moveSpd/6
+	elseif love.keyboard.isDown("lshift") then
+		spd = moveSpd*6
+	end
+
+	if love.keyboard.isDown("space") then
+		camPos.y = camPos.y + spd*dt
+	end
+
+	local x, y, z = -1, 0, 0
+	local xp, yp, zp = x, y*math.cos(camRot.x) - z*math.sin(camRot.x), y*math.sin(camRot.x) + z*math.cos(camRot.x)
+	x, y, z = zp*math.sin(camRot.y) + xp*math.cos(camRot.y), yp, zp*math.cos(camRot.y) - xp*math.sin(camRot.y)
+
+	if love.keyboard.isDown("d") then
+		camPos.x = camPos.x + x*spd*dt
+		camPos.y = camPos.y + y*spd*dt
+		camPos.z = camPos.z + z*spd*dt
+	elseif love.keyboard.isDown("a") then
+		camPos.x = camPos.x - x*spd*dt
+		camPos.y = camPos.y - y*spd*dt
+		camPos.z = camPos.z - z*spd*dt
+	end
+
+	x, y, z = 0, 0, 1
+	xp, yp, zp = x, y*math.cos(camRot.x) - z*math.sin(camRot.x), y*math.sin(camRot.x) + z*math.cos(camRot.x)
+	x, y, z = zp*math.sin(camRot.y) + xp*math.cos(camRot.y), yp, zp*math.cos(camRot.y) - xp*math.sin(camRot.y)
+
+	if love.keyboard.isDown("w") then
+		camPos.x = camPos.x + x*spd*dt
+		camPos.y = camPos.y + y*spd*dt
+		camPos.z = camPos.z + z*spd*dt
+	elseif love.keyboard.isDown("s") then
+		camPos.x = camPos.x - x*spd*dt
+		camPos.y = camPos.y - y*spd*dt
+		camPos.z = camPos.z - z*spd*dt
+	end
+
+	camTarget = {x=camPos.x+x, y=camPos.y+y, z=camPos.z+z}
 end
 
-function camera:move(dx, dy)
-self.x = self.x + (dx or 0)
-self.y = self.y + (dy or 0)
-end
-
-function camera:rotate(dr)
-self.rotation = self.rotation + dr
-end
-
-function camera:scale(sx, sy)
-sx = sx or 1
-self.scaleX = self.scaleX * sx
-self.scaleY = self.scaleY * (sy or sx)
-end
-
-function camera:setPosition(x, y)
-self.x = x or self.x
-self.y = y or self.y
-end
-
-function camera:setScale(sx, sy)
-self.scaleX = sx or self.scaleX
-self.scaleY = sy or self.scaleY
+function camera.turn(dx, dy)
+	camRot.y = camRot.y + -dx/200
+	camRot.x = math.min(math.max(camRot.x + dy/200, -math.pi/2+0.001), math.pi/2-0.001)
 end
