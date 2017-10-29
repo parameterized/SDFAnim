@@ -10,15 +10,15 @@ mat3 setCamera( in vec3 ro, in vec3 ta, float cr )
 
 vec2 castRay(vec3 ro, vec3 rd)
 {
-	float t = 0.0;
+	float t = 0.1;
 	float tmax = 20.0;
-	float m = 0.0;
+	float m = -1.0;
 	for (int i=0; i < 64; i++) {
 		float precis = 0.0005*t;
 		vec2 res = map(ro + rd*t);
-		if (res.x < precis || t > tmax) { break; }
 		t += res.x;
 		m = res.y;
+		if (res.x < precis || t > tmax) { break; }
 	}
 	if(t > tmax) { m = -1.0; }
 	return vec2(t, m);
@@ -48,6 +48,10 @@ vec3 render(vec3 ro, vec3 rd)
         col = 0.3 + 0.1*f*vec3(1.0);
 	} else if (m == 1.0) {
 		col *= dif*0.8 + 0.2;
+	} else if (m > 0.0 && m < 1.0) {
+		float f = mod(floor(5.0*pos.z) + floor(5.0*pos.x), 2.0);
+		col *= dif*0.8 + 0.2;
+		col = col*(1-m) + (0.3 + 0.1*f*vec3(1.0))*m;
 	}
 	col = mix( col, vec3(0.8,0.9,1.0), 1.0-exp( -0.0002*t*t*t ) );
 	return col;
